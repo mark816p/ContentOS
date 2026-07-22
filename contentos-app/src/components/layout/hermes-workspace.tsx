@@ -133,7 +133,7 @@ export default function ClaudeWorkspace() {
             >
               <option value="cloud">Cloud (OpenRouter)</option>
               <option value="ollama">Local (Ollama)</option>
-              <option value="mcp">MCP (Tools)</option>
+              <option value="mcp">MCP</option>
             </select>
           </div>
         </header>
