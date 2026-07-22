@@ -36,8 +36,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ response: result });
   } catch (error: unknown) {
-    console.error('API Chat Error:', error);
-    const err = error as Error;
+    console.error(`[ChatAPI] Execution Failed: ${error instanceof Error ? error.message : String(error)}`, error);
+    const err = error instanceof Error ? error : new Error('Unknown error');
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }
