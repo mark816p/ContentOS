@@ -40,6 +40,7 @@
   "build": {
     "appId": "com.contentos.engine",
     "productName": "ContentOS Engine",
+    "artifactName": "ContentOS-Engine-Setup.${ext}",
     "directories": {
       "output": "dist"
     },
