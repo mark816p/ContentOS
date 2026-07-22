@@ -5,6 +5,10 @@ export interface Message {
   content: string;
 }
 
+/**
+ * Gateway class responsible for routing messages to the appropriate AI backend.
+ * Supports Ollama (local), Cloud APIs, and Model Context Protocol (MCP) servers.
+ */
 export class Gateway {
   private target: AiTarget;
 
@@ -16,6 +20,11 @@ export class Gateway {
     this.target = target;
   }
 
+  /**
+   * Routes the message payload to the configured AI target and returns a response stream or string.
+   * @param messages Array of chat messages
+   * @returns A ReadableStream (for SSE) or a raw string response.
+   */
   async execute(messages: Message[]): Promise<ReadableStream | string> {
     switch (this.target) {
       case 'ollama':
