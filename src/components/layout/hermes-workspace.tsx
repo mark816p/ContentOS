@@ -2,8 +2,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { Search, Monitor, Code, Settings, Server, Database, PanelLeftClose, PanelLeftOpen, Terminal, Send, Loader2 } from 'lucide-react';
+import { Search, Monitor, Code, Settings, Server, Database, PanelLeftClose, PanelLeftOpen, Terminal, Send, Loader2, FileText, CheckCircle2, XCircle } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
+import { getSystemStatus, getContentItems, getAgentFiles } from '@/app/actions';
+
+type SystemStatus = { ollama: boolean; mcp: boolean; sqlite: boolean };
+type AgentFiles = { soul: string; memory: string };
 
 export default function HermesWorkspace() {
   const { theme, setTheme } = useTheme();
@@ -14,6 +18,29 @@ export default function HermesWorkspace() {
   const [isGenerating, setIsGenerating] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
+  const [status, setStatus] = useState<SystemStatus>({ ollama: false, mcp: false, sqlite: false });
+  const [contentItems, setContentItems] = useState<any[]>([]);
+  const [agentFiles, setAgentFiles] = useState<AgentFiles>({ soul: '', memory: '' });
+  const [activeRightTab, setActiveRightTab] = useState<'preview' | 'files' | 'logs'>('preview');
+
+  useEffect(() => {
+    async function loadInitialData() {
+      const [sysStatus, items, files] = await Promise.all([
+        getSystemStatus(),
+        getContentItems(),
+        getAgentFiles()
+      ]);
+      setStatus(sysStatus);
+      setContentItems(items);
+      setAgentFiles(files);
+    }
+    loadInitialData();
+    const interval = setInterval(async () => {
+      setStatus(await getSystemStatus());
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   const themes = [
     { id: 'default-hermes', name: 'Hermes Gold' },
     { id: 'slate-dev', name: 'Slate Dev' },
@@ -49,7 +76,6 @@ export default function HermesWorkspace() {
       if (!response.ok) throw new Error('Request failed');
 
       const data = await response.json();
-      
       setMessages(prev => [...prev, { role: 'assistant', content: data.response || data.message || 'Received response.' }]);
     } catch (error) {
       console.error(error);
@@ -59,9 +85,15 @@ export default function HermesWorkspace() {
     }
   };
 
+  const StatusIndicator = ({ online }: { online: boolean }) => (
+    online ? 
+      <span className="text-green-500 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online</span> :
+      <span className="text-red-500 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500"></span> Offline</span>
+  );
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground transition-colors duration-300">
-      <div className={`${leftPanelOpen ? 'w-64' : 'w-16'} flex flex-col border-r border-border transition-all duration-300 bg-background/50 backdrop-blur`}>
+      <div className={`${leftPanelOpen ? 'w-64' : 'w-16'} flex flex-col border-r border-border transition-all duration-300 bg-background/50 backdrop-blur shrink-0`}>
         <div className="p-4 flex items-center justify-between border-b border-border">
           {leftPanelOpen && <div className="font-bold text-accent tracking-widest uppercase text-xs">Hermes</div>}
           <button onClick={toggleLeftPanel} className="p-1 hover:bg-border/50 rounded text-foreground/70">
@@ -92,6 +124,20 @@ export default function HermesWorkspace() {
                   <li className="cursor-pointer hover:text-accent flex items-center gap-2"><span className="text-accent/50">▶</span> [Published]</li>
                 </ul>
               </div>
+              <div>
+                <h3 className="text-xs font-semibold text-foreground/50 mb-2 uppercase tracking-wider">Recent Documents</h3>
+                <ul className="space-y-1 text-xs">
+                  {contentItems.length === 0 ? (
+                    <li className="text-foreground/40 italic">No content found</li>
+                  ) : (
+                    contentItems.map(item => (
+                      <li key={item.id} className="truncate cursor-pointer hover:text-accent flex items-center gap-2">
+                        <FileText size={12} /> {item.id.slice(0, 8)} - {item.type}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
             </div>
 
             <div className="p-4 border-t border-border bg-background/80">
@@ -99,15 +145,15 @@ export default function HermesWorkspace() {
               <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1"><Server size={14}/> Ollama</span>
-                  <span className="text-green-500 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online</span>
+                  <StatusIndicator online={status.ollama} />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1"><Terminal size={14}/> MCP Server</span>
-                  <span className="text-green-500 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online</span>
+                  <StatusIndicator online={status.mcp} />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1"><Database size={14}/> SQLite</span>
-                  <span className="text-green-500 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online</span>
+                  <StatusIndicator online={status.sqlite} />
                 </div>
               </div>
             </div>
@@ -209,32 +255,69 @@ export default function HermesWorkspace() {
         </div>
       </div>
 
-      <div className="w-80 border-l border-border bg-background/50 backdrop-blur flex flex-col">
+      <div className="w-80 border-l border-border bg-background/50 backdrop-blur flex flex-col shrink-0">
         <div className="flex border-b border-border">
-          <button className="flex-1 py-3 text-xs font-semibold uppercase tracking-wider text-accent border-b-2 border-accent">Live Preview</button>
-          <button className="flex-1 py-3 text-xs font-semibold uppercase tracking-wider text-foreground/50 hover:text-foreground">Files</button>
-          <button className="flex-1 py-3 text-xs font-semibold uppercase tracking-wider text-foreground/50 hover:text-foreground">MCP Logs</button>
+          <button onClick={() => setActiveRightTab('preview')} className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wider ${activeRightTab === 'preview' ? 'text-accent border-b-2 border-accent' : 'text-foreground/50 hover:text-foreground'}`}>Live Preview</button>
+          <button onClick={() => setActiveRightTab('files')} className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wider ${activeRightTab === 'files' ? 'text-accent border-b-2 border-accent' : 'text-foreground/50 hover:text-foreground'}`}>Files</button>
+          <button onClick={() => setActiveRightTab('logs')} className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wider ${activeRightTab === 'logs' ? 'text-accent border-b-2 border-accent' : 'text-foreground/50 hover:text-foreground'}`}>MCP Logs</button>
         </div>
         
         <div className="flex-1 p-4 overflow-y-auto">
-          <div className="border border-border rounded-lg bg-background shadow-lg overflow-hidden">
-            <div className="bg-border/30 px-3 py-2 text-xs font-mono text-foreground/70 flex items-center gap-2 border-b border-border">
-              <Monitor size={14} /> Output Renderer
+          {activeRightTab === 'preview' && (
+            <div className="border border-border rounded-lg bg-background shadow-lg overflow-hidden">
+              <div className="bg-border/30 px-3 py-2 text-xs font-mono text-foreground/70 flex items-center gap-2 border-b border-border">
+                <Monitor size={14} /> Output Renderer
+              </div>
+              <div className="p-4 space-y-3">
+                <div className="flex gap-3">
+                  <div className="w-10 h-10 rounded-full bg-accent/20"></div>
+                  <div>
+                    <div className="font-bold text-sm">System Architect</div>
+                    <div className="text-xs text-foreground/50">@hermes_sys</div>
+                  </div>
+                </div>
+                <p className="text-sm">
+                  Local-first AI is the future. By combining Ollama with MCP and Hermes 3-panel layout, we unlock zero-latency workflows.
+                </p>
+                <div className="text-accent text-xs">#LocalAI #Hermes #NextJS</div>
+              </div>
             </div>
-            <div className="p-4 space-y-3">
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-full bg-accent/20"></div>
-                <div>
-                  <div className="font-bold text-sm">System Architect</div>
-                  <div className="text-xs text-foreground/50">@hermes_sys</div>
+          )}
+
+          {activeRightTab === 'files' && (
+            <div className="space-y-4">
+              <div className="border border-border rounded-lg bg-background shadow-lg overflow-hidden">
+                <div className="bg-border/30 px-3 py-2 text-xs font-mono text-foreground/70 flex items-center gap-2 border-b border-border">
+                  <FileText size={14} /> SOUL.md
+                </div>
+                <div className="p-4 text-xs font-mono text-foreground/80 whitespace-pre-wrap bg-background/50">
+                  {agentFiles.soul || 'Loading SOUL.md...'}
                 </div>
               </div>
-              <p className="text-sm">
-                Local-first AI is the future. By combining Ollama with MCP and Hermes 3-panel layout, we unlock zero-latency workflows.
-              </p>
-              <div className="text-accent text-xs">#LocalAI #Hermes #NextJS</div>
+              <div className="border border-border rounded-lg bg-background shadow-lg overflow-hidden">
+                <div className="bg-border/30 px-3 py-2 text-xs font-mono text-foreground/70 flex items-center gap-2 border-b border-border">
+                  <FileText size={14} /> MEMORY.md
+                </div>
+                <div className="p-4 text-xs font-mono text-foreground/80 whitespace-pre-wrap bg-background/50">
+                  {agentFiles.memory || 'Loading MEMORY.md...'}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
+
+          {activeRightTab === 'logs' && (
+            <div className="border border-border rounded-lg bg-background shadow-lg overflow-hidden h-full flex flex-col">
+              <div className="bg-border/30 px-3 py-2 text-xs font-mono text-foreground/70 flex items-center gap-2 border-b border-border shrink-0">
+                <Terminal size={14} /> MCP Execution Trace
+              </div>
+              <div className="p-4 text-xs font-mono text-zinc-400 whitespace-pre-wrap bg-black/50 flex-1 overflow-y-auto">
+                <div className="text-green-500">{'>'} MCP Server Listening on stdio...</div>
+                <div className="text-zinc-500">{'>'} Client connected.</div>
+                <div className="text-blue-400">{'>'} [req] mcp.tools.list</div>
+                <div className="text-zinc-500">{'>'} [res] returned 14 tools.</div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
