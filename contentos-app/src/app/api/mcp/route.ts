@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     
-    // Placeholder for MCP (Model Context Protocol) server interaction
-    // The MCP TS SDK allows connecting to local MCP servers via standard I/O or SSE.
+    if (body.action === 'list_items') {
+      const items = await prisma.contentItem.findMany({
+        orderBy: { updatedAt: 'desc' },
+        take: 20
+      });
+      return NextResponse.json({ items });
+    }
     
+    // Placeholder for other MCP (Model Context Protocol) server interaction
     return NextResponse.json({ 
       status: 'success', 
       message: 'MCP endpoint reached. Integration pending.',
