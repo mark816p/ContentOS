@@ -5,16 +5,16 @@ import fs from "fs/promises";
 import path from "path";
 
 /**
- * Fetches the connectivity status of Ollama, MCP, and SQLite.
+ * Fetches the connectivity status of the Local Engine, MCP, and SQLite.
  * @returns Object representing the status of each system component.
  */
 export async function getSystemStatus() {
-  let ollamaStatus = false;
+  let localEngineStatus = false;
   try {
     const res = await fetch("http://localhost:11434", { method: "HEAD", signal: AbortSignal.timeout(1000) });
-    ollamaStatus = res.ok;
+    localEngineStatus = res.ok;
   } catch {
-    ollamaStatus = false;
+    localEngineStatus = false;
   }
 
   let dbStatus = false;
@@ -26,7 +26,7 @@ export async function getSystemStatus() {
   }
 
   return {
-    ollama: ollamaStatus,
+    localEngine: localEngineStatus,
     mcp: true, // Mock MCP server status
     sqlite: dbStatus,
   };

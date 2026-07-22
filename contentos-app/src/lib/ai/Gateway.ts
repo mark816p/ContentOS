@@ -1,4 +1,4 @@
-export type AiTarget = 'cloud' | 'ollama' | 'mcp';
+export type AiTarget = 'cloud' | 'local' | 'mcp';
 
 export interface Message {
   role: 'user' | 'assistant' | 'system';
@@ -7,7 +7,7 @@ export interface Message {
 
 /**
  * Gateway class responsible for routing messages to the appropriate AI backend.
- * Supports Ollama (local), Cloud APIs, and Model Context Protocol (MCP) servers.
+ * Supports Local Engines, Cloud APIs, and Model Context Protocol (MCP) servers.
  */
 export class Gateway {
   private target: AiTarget;
@@ -27,8 +27,8 @@ export class Gateway {
    */
   async execute(messages: Message[]): Promise<ReadableStream | string> {
     switch (this.target) {
-      case 'ollama':
-        return this.executeOllama(messages);
+      case 'local':
+        return this.executeLocal(messages);
       case 'mcp':
         return this.executeMCP(messages);
       case 'cloud':
@@ -37,20 +37,19 @@ export class Gateway {
     }
   }
 
-  private async executeOllama(messages: Message[]): Promise<ReadableStream> {
-    // Note: requires ollama-js or direct fetch to http://localhost:11434/api/chat
+  private async executeLocal(messages: Message[]): Promise<ReadableStream> {
     const response = await fetch('http://localhost:11434/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama3', // default model
+        model: 'default',
         messages,
         stream: true,
       }),
     });
     
     if (!response.ok) {
-      throw new Error(`Ollama request failed: ${response.statusText}`);
+      throw new Error(`Local engine request failed: ${response.statusText}`);
     }
     
     return response.body as ReadableStream;
@@ -58,7 +57,6 @@ export class Gateway {
 
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   private async executeCloud(_messages: Message[]): Promise<string> {
-    // Cloud API placeholder for Anthropic / OpenRouter
     return "Cloud API response (mocked)";
   }
 

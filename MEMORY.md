@@ -1,4 +1,4 @@
-# Hermes Memory
+# ContentOS Memory
 
 - Project: ContentOS Engine
 - Stack: Next.js 15, Prisma (SQLite), Zustand, Tailwind CSS.

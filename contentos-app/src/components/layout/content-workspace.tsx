@@ -16,7 +16,7 @@ const FileTree = ({ items }: { items: { sourceText: string }[] }) => (
   </div>
 );
 
-export default function ClaudeWorkspace() {
+export default function ContentWorkspace() {
   const { aiTarget, setAiTarget, leftPanelOpen, toggleLeftPanel, contextTokens, setContextTokens } = useAppStore();
   
   const [input, setInput] = useState('');
@@ -128,11 +128,11 @@ export default function ClaudeWorkspace() {
           <div className="flex items-center gap-4">
             <select 
               value={aiTarget} 
-              onChange={(e) => setAiTarget(e.target.value as 'cloud' | 'ollama' | 'mcp')}
+              onChange={(e) => setAiTarget(e.target.value as 'cloud' | 'local' | 'mcp')}
               className="bg-[#262626] border-none text-sm rounded-md px-3 py-1.5 focus:ring-1 focus:ring-neutral-500 text-neutral-200 outline-none"
             >
-              <option value="cloud">Cloud (OpenRouter)</option>
-              <option value="ollama">Local (Ollama)</option>
+              <option value="cloud">Cloud Engine</option>
+              <option value="local">Local Engine</option>
               <option value="mcp">MCP</option>
             </select>
           </div>

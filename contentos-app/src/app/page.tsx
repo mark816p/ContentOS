@@ -1,9 +1,9 @@
-import HermesWorkspace from "@/components/layout/hermes-workspace";
+import ContentWorkspace from "@/components/layout/content-workspace";
 
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <HermesWorkspace />
+      <ContentWorkspace />
     </main>
   );
 }

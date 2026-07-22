@@ -1,5 +1,5 @@
 /* src/styles/themes.css */
-:root, [data-theme="default-hermes"] {
+:root, [data-theme="default-content"] {
   --background: #09090b;
   --border: #3f3f46;
   --accent: #FFD700;
@@ -13,14 +13,14 @@
   --foreground: #E2E8F0;
 }
 
-[data-theme="ares-red"] {
+[data-theme="crimson-red"] {
   --background: #0f0707;
   --border: #451a1a;
   --accent: #A53A2A;
   --foreground: #FEE2E2;
 }
 
-[data-theme="poseidon-ocean"] {
+[data-theme="deep-ocean"] {
   --background: #050e14;
   --border: #112a3b;
   --accent: #2DD4BF;

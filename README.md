@@ -1,14 +1,14 @@
 # ContentOS Engine
 
-ContentOS Engine is a production-ready, full-stack, local-first web and desktop AI orchestrator modeled after the Hermes 3-panel UI architecture.
+ContentOS Engine is a production-ready, full-stack, local-first web and desktop AI orchestrator modeled after minimalist UI architecture.
 
 ## Features
 
-- **Local-First AI Execution**: Native integrations for Ollama and Model Context Protocol (MCP) servers.
-- **Hermes Architecture**: A highly productive 3-panel workspace UI for AI researchers and power users.
+- **Local-First AI Execution**: Native integrations for local engines and Model Context Protocol (MCP) servers.
+- **Minimalist Architecture**: A highly productive workspace UI for AI researchers and power users.
 - **Cross-Platform Installers**: Compile standalone desktop apps for Windows, macOS, and Linux (x64 and ARM).
 - **SQLite Persistence**: User prompts and generated drafts are automatically persisted locally via Prisma ORM.
-- **Dynamic CSS Themes**: Switch between multiple aesthetic themes instantly (Hermes Gold, Slate Dev, Ares Red, etc.).
+- **Dynamic CSS Themes**: Switch between multiple aesthetic themes instantly.
 
 ## Installation
 
@@ -30,7 +30,7 @@ npm run build:desktop
 - **Frontend**: Next.js 15 (App Router), React 19, Tailwind CSS v4, Zustand.
 - **Desktop Runtime**: Electron + `electron-builder`.
 - **Database**: Prisma ORM with SQLite.
-- **AI Integrations**: OpenRouter, Anthropic, Ollama, and local MCP SDKs.
+- **AI Integrations**: Cloud Engines, Local Engines, and local MCP SDKs.
 
 ## License
 
