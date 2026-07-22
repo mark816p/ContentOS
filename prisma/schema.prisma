@@ -1,0 +1,34 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ContentItem {
+  id         String   @id @default(uuid())
+  type       String   // idea, draft, scheduled, published
+  sourceText String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  outputs    ChannelOutput[]
+}
+
+model ChannelOutput {
+  id            String   @id @default(uuid())
+  contentItemId String
+  platform      String   // linkedin, twitter, instagram, youtube, email
+  textContent   String
+  mediaUrls     String?  // JSON string or comma separated
+  status        String   // draft, scheduled, published, error
+  contentItem   ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+}
+
+model PlatformConfig {
+  id         String   @id @default(uuid())
+  platform   String
+  apiToken   String
+  webhookUrl String?
+}

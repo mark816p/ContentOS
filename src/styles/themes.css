@@ -1,0 +1,54 @@
+/* src/styles/themes.css */
+:root, [data-theme="default-hermes"] {
+  --background: #09090b;
+  --border: #3f3f46;
+  --accent: #FFD700;
+  --foreground: #FFF8DC;
+}
+
+[data-theme="slate-dev"] {
+  --background: #0a0e17;
+  --border: #1e293b;
+  --accent: #4169E1;
+  --foreground: #E2E8F0;
+}
+
+[data-theme="ares-red"] {
+  --background: #0f0707;
+  --border: #451a1a;
+  --accent: #A53A2A;
+  --foreground: #FEE2E2;
+}
+
+[data-theme="poseidon-ocean"] {
+  --background: #050e14;
+  --border: #112a3b;
+  --accent: #2DD4BF;
+  --foreground: #E0F2FE;
+}
+
+[data-theme="mono-minimal"] {
+  --background: #000000;
+  --border: #333333;
+  --accent: #FFFFFF;
+  --foreground: #C9D1D9;
+}
+
+[data-theme="warm-parchment"] {
+  --background: #F8E5D3;
+  --border: #D6A7A1;
+  --accent: #D88B24;
+  --foreground: #5B3A29;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
