@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContentOS Engine</title>
+    <style>
+        :root {
+            --bg: #09090b;
+            --text: #FFF8DC;
+            --accent: #FFD700;
+            --border: #3f3f46;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--accent), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p.subtitle {
+            font-size: 1.25rem;
+            color: #a1a1aa;
+            margin-bottom: 3rem;
+        }
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        a.btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        a.btn-primary {
+            background-color: var(--accent);
+            color: #000;
+        }
+        a.btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        a.btn-secondary {
+            background-color: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        a.btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .features {
+            margin-top: 4rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+        .feature-card {
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+        .feature-card h3 {
+            color: var(--accent);
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ContentOS Engine</h1>
+        <p class="subtitle">A production-ready, full-stack, local-first web and desktop AI orchestrator.</p>
+        
+        <div class="buttons">
+            <a href="https://github.com/mark816p/ContentOS/releases/latest" class="btn btn-primary">Download for Windows</a>
+            <a href="https://github.com/mark816p/ContentOS/releases/latest" class="btn btn-secondary">Download for Mac</a>
+            <a href="https://github.com/mark816p/ContentOS/releases/latest" class="btn btn-secondary">Download for Linux</a>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>Local-First AI</h3>
+                <p>Execute Ollama and Model Context Protocol (MCP) securely and locally.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Hermes Architecture</h3>
+                <p>3-Panel workspace UI modeled after NousResearch's internal agents.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Cross-Platform</h3>
+                <p>Native Desktop applications compiled for x64 and ARM64.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
