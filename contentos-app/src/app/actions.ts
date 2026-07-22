@@ -4,6 +4,10 @@ import { prisma } from "@/lib/prisma";
 import fs from "fs/promises";
 import path from "path";
 
+/**
+ * Fetches the connectivity status of Ollama, MCP, and SQLite.
+ * @returns Object representing the status of each system component.
+ */
 export async function getSystemStatus() {
   let ollamaStatus = false;
   try {
@@ -28,6 +32,10 @@ export async function getSystemStatus() {
   };
 }
 
+/**
+ * Retrieves the latest content items from the SQLite database.
+ * @returns Array of ContentItem objects, ordered by updatedAt descending.
+ */
 export async function getContentItems() {
   try {
     const items = await prisma.contentItem.findMany({
@@ -40,6 +48,10 @@ export async function getContentItems() {
   }
 }
 
+/**
+ * Reads the SOUL.md and MEMORY.md files from the project root.
+ * @returns Object containing the markdown string contents of the files.
+ */
 export async function getAgentFiles() {
   try {
     const rootDir = process.cwd();
