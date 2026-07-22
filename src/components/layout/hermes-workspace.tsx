@@ -11,7 +11,7 @@ type AgentFiles = { soul: string; memory: string };
 
 export default function HermesWorkspace() {
   const { theme, setTheme } = useTheme();
-  const { aiTarget, setAiTarget, leftPanelOpen, toggleLeftPanel, contextTokens } = useAppStore();
+  const { aiTarget, setAiTarget, leftPanelOpen, toggleLeftPanel, contextTokens, setContextTokens } = useAppStore();
   
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<{role: string, content: string}[]>([]);
@@ -56,7 +56,10 @@ export default function HermesWorkspace() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isGenerating]);
+    // Update token count (mock calculation: chars / 4)
+    const tokenCount = messages.reduce((acc, m) => acc + m.content.length, 0) / 4;
+    setContextTokens(Math.max(4096, 4096 + Math.floor(tokenCount)));
+  }, [messages, isGenerating, setContextTokens]);
 
   const handleSubmit = async () => {
     if (!input.trim() || isGenerating) return;
@@ -77,6 +80,10 @@ export default function HermesWorkspace() {
 
       const data = await response.json();
       setMessages(prev => [...prev, { role: 'assistant', content: data.response || data.message || 'Received response.' }]);
+      
+      // Auto-refresh file tree
+      const updatedItems = await getContentItems();
+      setContentItems(updatedItems);
     } catch (error) {
       console.error(error);
       setMessages(prev => [...prev, { role: 'assistant', content: 'Error generating response.' }]);

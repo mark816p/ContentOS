@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Gateway, AiTarget } from '@/lib/ai/Gateway';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
@@ -7,6 +8,17 @@ export async function POST(req: Request) {
     
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Invalid messages array' }, { status: 400 });
+    }
+
+    // Extract the latest user message to save as an Idea in SQLite
+    const lastUserMessage = messages.filter(m => m.role === 'user').pop();
+    if (lastUserMessage) {
+      await prisma.contentItem.create({
+        data: {
+          type: 'idea',
+          sourceText: lastUserMessage.content,
+        }
+      });
     }
 
     const gateway = new Gateway(target as AiTarget);
