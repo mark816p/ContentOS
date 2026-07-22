@@ -1,0 +1,90 @@
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
+const { spawn } = require('child_process');
+const http = require('http');
+
+let mainWindow;
+let nextProcess;
+
+function createWindow(port) {
+  mainWindow = new BrowserWindow({
+    width: 1280,
+    height: 800,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
+    autoHideMenuBar: true,
+  });
+
+  mainWindow.loadURL(`http://localhost:${port}`);
+
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
+}
+
+function startNextJsServer() {
+  return new Promise((resolve, reject) => {
+    const port = 3000; // In a production app, we would dynamically assign a free port.
+    const isDev = !app.isPackaged;
+
+    if (isDev) {
+      // Dev mode: handled by concurrently, wait-on, just resolve
+      resolve(port);
+      return;
+    }
+
+    // Production mode: run standalone server
+    const serverPath = path.join(process.resourcesPath, 'app.asar.unpacked', '.next', 'standalone', 'server.js');
+    
+    const env = {
+      ...process.env,
+      PORT: port.toString(),
+      NODE_ENV: 'production',
+      // Prisma SQLite path inside user data dir
+      DATABASE_URL: `file:${path.join(app.getPath('userData'), 'dev.db')}`,
+    };
+
+    nextProcess = spawn(process.execPath, [serverPath], {
+      env,
+      stdio: 'inherit',
+    });
+
+    // Simple health check polling
+    const checkServer = () => {
+      http.get(`http://localhost:${port}`, (res) => {
+        if (res.statusCode === 200) {
+          resolve(port);
+        } else {
+          setTimeout(checkServer, 500);
+        }
+      }).on('error', () => {
+        setTimeout(checkServer, 500);
+      });
+    };
+
+    setTimeout(checkServer, 500);
+  });
+}
+
+app.whenReady().then(async () => {
+  const port = await startNextJsServer();
+  createWindow(port);
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow(port);
+  });
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on('before-quit', () => {
+  if (nextProcess) {
+    nextProcess.kill();
+  }
+});

@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ContentOS Engine
 
-## Getting Started
+ContentOS Engine is a production-ready, full-stack, local-first web and desktop AI orchestrator modeled after the Hermes 3-panel UI architecture.
 
-First, run the development server:
+## Features
+
+- **Local-First AI Execution**: Native integrations for Ollama and Model Context Protocol (MCP) servers.
+- **Hermes Architecture**: A highly productive 3-panel workspace UI for AI researchers and power users.
+- **Cross-Platform Installers**: Compile standalone desktop apps for Windows, macOS, and Linux (x64 and ARM).
+- **SQLite Persistence**: User prompts and generated drafts are automatically persisted locally via Prisma ORM.
+- **Dynamic CSS Themes**: Switch between multiple aesthetic themes instantly (Hermes Gold, Slate Dev, Ares Red, etc.).
+
+## Installation
+
+You can download the pre-compiled standalone installers for Windows, Mac, and Linux from our [GitHub Releases page](https://github.com/mark816p/ContentOS/releases/latest).
+
+### Building from Source
+
+To build the desktop application locally, you need Node.js (v20+) installed.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/mark816p/ContentOS.git
+cd ContentOS/contentos-app
+npm install
+npm run build:desktop
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Architecture
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend**: Next.js 15 (App Router), React 19, Tailwind CSS v4, Zustand.
+- **Desktop Runtime**: Electron + `electron-builder`.
+- **Database**: Prisma ORM with SQLite.
+- **AI Integrations**: OpenRouter, Anthropic, Ollama, and local MCP SDKs.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
