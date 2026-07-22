@@ -36,19 +36,31 @@ function startNextJsServer() {
     }
 
     // Production mode: run standalone server
-    const serverPath = path.join(process.resourcesPath, 'app.asar.unpacked', '.next', 'standalone', 'server.js');
+    const serverDir = path.join(process.resourcesPath, 'app.asar.unpacked', '.next', 'standalone');
+    const serverPath = path.join(serverDir, 'server.js');
     
+    // Database Template Setup
+    const fs = require('fs');
+    const dbPath = path.join(app.getPath('userData'), 'dev.db');
+    if (!fs.existsSync(dbPath)) {
+      const templateDb = path.join(serverDir, 'prisma', 'dev.db');
+      if (fs.existsSync(templateDb)) {
+        fs.copyFileSync(templateDb, dbPath);
+      }
+    }
+
     const env = {
       ...process.env,
       PORT: port.toString(),
       NODE_ENV: 'production',
       // Prisma SQLite path inside user data dir
-      DATABASE_URL: `file:${path.join(app.getPath('userData'), 'dev.db')}`,
+      DATABASE_URL: `file:${dbPath}`,
     };
 
     nextProcess = spawn(process.execPath, [serverPath], {
       env,
       stdio: 'inherit',
+      cwd: serverDir
     });
 
     // Simple health check polling
