@@ -12,8 +12,9 @@ export async function POST(req: Request) {
       message: 'MCP endpoint reached. Integration pending.',
       data: body 
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('API MCP Error:', error);
-    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
+    const err = error as Error;
+    return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

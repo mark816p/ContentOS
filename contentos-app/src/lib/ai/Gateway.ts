@@ -47,12 +47,14 @@ export class Gateway {
     return response.body as ReadableStream;
   }
 
-  private async executeCloud(messages: Message[]): Promise<string> {
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  private async executeCloud(_messages: Message[]): Promise<string> {
     // Cloud API placeholder for Anthropic / OpenRouter
     return "Cloud API response (mocked)";
   }
 
-  private async executeMCP(messages: Message[]): Promise<string> {
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  private async executeMCP(_messages: Message[]): Promise<string> {
     // MCP client call to local /api/mcp endpoint
     return "MCP execution result (mocked)";
   }

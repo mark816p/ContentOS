@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from 'next-themes';
-import { Send, Menu, Settings, MessageSquare, ChevronRight, X, Cpu, PanelLeftClose, PanelLeft } from 'lucide-react';
-import useAppStore from '@/store/useAppStore';
+import { Send, MessageSquare, X, Cpu, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { useAppStore } from '@/store/useAppStore';
 
 // Mock File Tree component for the sidebar
-const FileTree = ({ items }: { items: any[] }) => (
+const FileTree = ({ items }: { items: { sourceText: string }[] }) => (
   <div className="text-sm font-medium">
     {items.map((item, i) => (
       <div key={i} className="flex items-center gap-2 py-2 px-3 hover:bg-neutral-800 rounded-md cursor-pointer text-neutral-300">
@@ -18,7 +17,6 @@ const FileTree = ({ items }: { items: any[] }) => (
 );
 
 export default function ClaudeWorkspace() {
-  const { theme, setTheme } = useTheme();
   const { aiTarget, setAiTarget, leftPanelOpen, toggleLeftPanel, contextTokens, setContextTokens } = useAppStore();
   
   const [input, setInput] = useState('');
@@ -26,7 +24,7 @@ export default function ClaudeWorkspace() {
     { role: 'assistant', content: 'Hello! I am ContentOS Engine. How can I assist you today?' }
   ]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [contentItems, setContentItems] = useState<any[]>([]);
+  const [contentItems, setContentItems] = useState<{ sourceText: string }[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -130,7 +128,7 @@ export default function ClaudeWorkspace() {
           <div className="flex items-center gap-4">
             <select 
               value={aiTarget} 
-              onChange={(e) => setAiTarget(e.target.value as any)}
+              onChange={(e) => setAiTarget(e.target.value as 'cloud' | 'ollama' | 'mcp')}
               className="bg-[#262626] border-none text-sm rounded-md px-3 py-1.5 focus:ring-1 focus:ring-neutral-500 text-neutral-200 outline-none"
             >
               <option value="cloud">Cloud (OpenRouter)</option>

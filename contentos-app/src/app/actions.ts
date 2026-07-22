@@ -9,7 +9,7 @@ export async function getSystemStatus() {
   try {
     const res = await fetch("http://localhost:11434", { method: "HEAD", signal: AbortSignal.timeout(1000) });
     ollamaStatus = res.ok;
-  } catch (e) {
+  } catch {
     ollamaStatus = false;
   }
 
@@ -17,7 +17,7 @@ export async function getSystemStatus() {
   try {
     await prisma.$queryRaw`SELECT 1`;
     dbStatus = true;
-  } catch (e) {
+  } catch {
     dbStatus = false;
   }
 
