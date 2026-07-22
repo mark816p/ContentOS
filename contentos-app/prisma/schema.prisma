@@ -14,6 +14,8 @@ model ContentItem {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   outputs    ChannelOutput[]
+
+  @@index([updatedAt(sort: Desc)])
 }
 
 model ChannelOutput {
@@ -24,6 +26,9 @@ model ChannelOutput {
   mediaUrls     String?  // JSON string or comma separated
   status        String   // draft, scheduled, published, error
   contentItem   ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+
+  @@index([contentItemId])
+  @@index([platform, status])
 }
 
 model PlatformConfig {
@@ -31,4 +36,6 @@ model PlatformConfig {
   platform   String
   apiToken   String
   webhookUrl String?
+
+  @@unique([platform])
 }
